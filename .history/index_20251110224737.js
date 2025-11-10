@@ -41,7 +41,7 @@ async function run() {
         })
 
         app.get("/events/:id", async (req, res) => {
-            const id = req.params.id;
+          const id = req.params.id;
             const ObjectId = require("mongodb").ObjectId;
             const result = await eventCollection.findOne({ _id: new ObjectId(id) });
             res.send(result);
@@ -54,7 +54,7 @@ async function run() {
                 eventId: joinedData.eventId,
                 userEmail: joinedData.userEmail
             })
-            if (alreadyJoined) {
+            if(alreadyJoined){
                 return res.status(409).send({ message: "Already joined" });
             }
 
@@ -68,39 +68,16 @@ async function run() {
         })
 
         app.get("/my-events/:email", async (req, res) => {
-            const email = req.params.email;
-            const result = await eventCollection.find({ email }).toArray();
-            res.send(result);
+          const email = req.params.email;
+          const result = await eventCollection.find({ email }).toArray();
+          res.send(result);
         })
 
         app.delete("/events/:id", async (req, res) => {
-
-            try {
-                const id = req.params.id;
-                const ObjectId = require("mongodb").ObjectId;
-                const result = await eventCollection.deleteOne({ _id: new ObjectId(id) });
-                res.send(result);
-            }
-            catch (error) {
-                res.status(500).send({ message: "Failed to delete event" });
-            }
-
+          const id = req.params.id;
+          const ObjectId = require("mongodb").ObjectId;
+          const result = eventCollection.deleteOne( _id: new ObjectId(id) );
         })
-
-        app.put("/events/:id", async (req, res) => {
-            try {
-                const id = req.params.id;
-                const updateEvent = req.body;
-                const ObjectId = require("mongodb").ObjectId;
-                const result = await eventCollection.updateOne(
-                    { _id: new ObjectId(id) },
-                    { $set: updateEvent }
-                );
-                res.send(result);
-            } catch (error) {
-                res.status(500).send({ message: "Failed to update event" });
-            }
-        });
 
 
 

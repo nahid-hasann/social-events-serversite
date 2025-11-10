@@ -99,7 +99,7 @@ async function run() {
                 res.send(result);
             } catch (error) {
                 res.status(500).send({ message: "Failed to update event" });
-            }
+              }
         });
 
 

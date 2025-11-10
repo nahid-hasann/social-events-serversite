@@ -98,8 +98,9 @@ async function run() {
                 );
                 res.send(result);
             } catch (error) {
+                console.error("Update error:", error);
                 res.status(500).send({ message: "Failed to update event" });
-            }
+              }
         });
 
 

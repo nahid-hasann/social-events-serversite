@@ -88,19 +88,13 @@ async function run() {
         })
 
         app.put("/events/:id", async (req, res) => {
-            try {
-                const id = req.params.id;
-                const updateEvent = req.body;
-                const ObjectId = require("mongodb").ObjectId;
-                const result = await eventCollection.updateOne(
-                    { _id: new ObjectId(id) },
-                    { $set: updateEvent }
-                );
-                res.send(result);
-            } catch (error) {
-                res.status(500).send({ message: "Failed to update event" });
-            }
-        });
+          try{
+            const id = req.params.id;
+            const updateEvent = req.body;
+            const ObjectId = require("mongodb").
+
+          }
+        })
 
 
 

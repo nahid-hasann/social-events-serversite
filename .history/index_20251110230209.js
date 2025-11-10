@@ -95,12 +95,10 @@ async function run() {
                 const result = await eventCollection.updateOne(
                     { _id: new ObjectId(id) },
                     { $set: updateEvent }
-                );
-                res.send(result);
-            } catch (error) {
-                res.status(500).send({ message: "Failed to update event" });
+                )
+res.send(result);
             }
-        });
+        })
 
 
 
