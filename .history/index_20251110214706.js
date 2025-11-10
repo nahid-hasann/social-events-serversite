@@ -67,11 +67,7 @@ async function run() {
             res.send(result);
         })
 
-        app.get("/my-events/:email", async (req, res) => {
-          const email = req.params.email;
-          const result = await eventCollection.find({ email }).toArray();
-          res.send(result);
-        })
+        app.get("/my-events/:email", )
 
 
 
