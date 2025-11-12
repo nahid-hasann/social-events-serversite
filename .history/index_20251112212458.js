@@ -5,26 +5,13 @@ const app = express()
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const port = process.env.PORT || 3000;
 
-
-
 const admin = require("firebase-admin");
 
-admin.initializeApp({
-    credential: admin.credential.cert({
-        type: process.env.TYPE,
-        project_id: process.env.PROJECT_ID,
-        private_key_id: process.env.PRIVATE_KEY_ID,
-        private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
-        client_email: process.env.CLIENT_EMAIL,
-        client_id: process.env.CLIENT_ID,
-        auth_uri: process.env.AUTH_URI,
-        token_uri: process.env.TOKEN_URI,
-        auth_provider_x509_cert_url: process.env.AUTH_PROVIDER_X509_CERT_URL,
-        client_x509_cert_url: process.env.CLIENT_X509_CERT_URL,
-        universe_domain: process.env.UNIVERSE_DOMAIN
-    }),
-});
+const serviceAccount = require("./firebaseverifytoken.json");
 
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
 
 
 
@@ -48,23 +35,26 @@ app.get('/', (req, res) => {
 
 
 const verifyFireBaseToken = async (req, res, next) => {
-    const authorization = req.headers.authorization;
-
-    if (!authorization || !authorization.startsWith("Bearer ")) {
-        return res.status(401).send({ message: "Unauthorized access" });
+    console.log('inside the middleware', req.headers)
+    const authrization = req.headers.authrization;
+    if (!authrization) {
+        return res.status(401).send({ message: 'unauthorization access' });
     }
-
-    const token = authorization.split(" ")[1];
+    const token = authrization.split(" ")[1];
+    if (!token) {
+        return res.status(401).send({ message: 'unauthorization access' });
+    }
 
     try {
         const decoded = await admin.auth().verifyIdToken(token);
-        req.user = decoded;
+        req.user = 
         next();
-    } catch (error) {
-        console.error("Token verification failed:", error);
-        return res.status(401).send({ message: "Unauthorized access" });
     }
-};
+    catch {
+        return res.status(401).send({ message: 'unauthorization access' });
+    }
+
+}
 
 
 
@@ -77,13 +67,13 @@ async function run() {
         const eventCollection = database.collection("events");
         const joinedEventsCollection = database.collection("joinedEvents")
 
-        app.post("/events", verifyFireBaseToken, async (req, res) => {
+        app.post("/events", async (req, res) => {
             const eventdata = req.body;
             const result = await eventCollection.insertOne(eventdata);
             res.send(result);
         })
 
-        app.get("/events", async (req, res) => {
+        app.get("/events", verifyFireBaseToken, async (req, res) => {
             const { type, search } = req.query;
             let query = {};
 
@@ -102,7 +92,7 @@ async function run() {
             res.send(result);
         })
 
-        app.post("/joined-events", verifyFireBaseToken, async (req, res) => {
+        app.post("/joined-events", async (req, res) => {
             const joinedData = req.body;
 
             const alreadyJoined = await joinedEventsCollection.findOne({
@@ -116,11 +106,8 @@ async function run() {
             const result = await joinedEventsCollection.insertOne(joinedData);
             res.send(result);
         })
-        app.get("/joined-events/:email", verifyFireBaseToken, async (req, res) => {
+        app.get("/joined-events/:email", async (req, res) => {
             const email = req.params.email;
-            if (req.user.email !== email) {
-                return res.status(403).send({ message: "Forbidden Access" });
-            }
             const result = await joinedEventsCollection.find({ userEmail: email }).toArray();
             res.send(result);
         })
@@ -131,7 +118,7 @@ async function run() {
             res.send(result);
         })
 
-        app.delete("/events/:id", verifyFireBaseToken, async (req, res) => {
+        app.delete("/events/:id", async (req, res) => {
 
             try {
                 const id = req.params.id;
@@ -145,7 +132,7 @@ async function run() {
 
         })
 
-        app.put("/events/:id", verifyFireBaseToken, async (req, res) => {
+        app.put("/events/:id", async (req, res) => {
             try {
                 const id = req.params.id;
                 const updateEvent = req.body;

@@ -5,8 +5,6 @@ const app = express()
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const port = process.env.PORT || 3000;
 
-
-
 const admin = require("firebase-admin");
 
 admin.initializeApp({
