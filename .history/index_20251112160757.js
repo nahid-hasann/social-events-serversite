@@ -5,19 +5,7 @@ const app = express()
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const port = process.env.PORT || 3000;
 
- //
-app.use(
-    cors({
-        origin: [
-            "http://localhost:5173", // local dev
-            "https://social-events-e4606.web.app", // তোমার live frontend URL
-            "https://social-events-e4606.firebaseapp.com", // যদি firebase host করো
-        ],
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization"],
-    })
-  );
- //
+
 
 app.use(cors());
 app.use(express.json());
