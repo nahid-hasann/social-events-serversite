@@ -169,7 +169,6 @@ async function run() {
         // Ensures that the client will close when you finish/error
         // await client.close();
         // await client.close();
-        // await client.close();
     }
 }
 run().catch(console.dir);
