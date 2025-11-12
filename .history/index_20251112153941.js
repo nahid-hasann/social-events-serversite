@@ -22,12 +22,11 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
-
+console.log("MONGODB_URI loaded:", !!process.env.MONGODB_URI);
 
 
 async function run() {
     try {
-        console.log("MONGODB_URI loaded:", !!process.env.MONGODB_URI);
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
         const database = client.db("socialEventsDb");
@@ -50,7 +49,7 @@ async function run() {
             const result = await eventCollection.find(query).toArray();
             res.send(result);
         });
-
+          
 
         app.get("/events/:id", async (req, res) => {
             const id = req.params.id;

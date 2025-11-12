@@ -50,7 +50,7 @@ async function run() {
             const result = await eventCollection.find(query).toArray();
             res.send(result);
         });
-
+          
 
         app.get("/events/:id", async (req, res) => {
             const id = req.params.id;
