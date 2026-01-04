@@ -5,7 +5,7 @@ const app = express()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 3000;
 
-// Firebase Admin এখন আর লাগছে না, তবুও কনফিগটা থাক সমস্যা নেই, ব্যবহার করবো না।
+
 const admin = require("firebase-admin");
 
 admin.initializeApp({
@@ -37,7 +37,7 @@ const client = new MongoClient(uri, {
     }
 });
 
-// ❌ verifyFireBaseToken ফাংশন বাদ দিয়ে দিয়েছি
+
 
 async function run() {
     try {
@@ -49,9 +49,7 @@ async function run() {
 
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
-        // --- Users API ---
-
-        // 1. Save User
+       
         app.post('/users', async (req, res) => {
             const user = req.body;
             const query = { email: user.email };
@@ -63,13 +61,13 @@ async function run() {
             res.send(result);
         });
 
-        // 2. Get All Users
+       
         app.get('/users', async (req, res) => {
             const result = await userCollection.find().toArray();
             res.send(result);
         });
 
-        // 3. Make Admin (Public)
+       
         app.patch('/users/admin/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) };
@@ -82,7 +80,7 @@ async function run() {
             res.send(result);
         });
 
-        // 4. Delete User (Public)
+        
         app.delete('/users/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
@@ -90,10 +88,10 @@ async function run() {
             res.send(result);
         });
 
-        // 5. Check Admin Status (Public)
+
         app.get('/users/admin/:email', async (req, res) => {
             const email = req.params.email;
-            // সিকিউরিটি চেক বাদ দিয়েছি
+           
             const query = { email: email };
             const user = await userCollection.findOne(query);
 
@@ -105,16 +103,14 @@ async function run() {
         });
 
 
-        // --- Events API ---
-
-        // 6. Create Event (Public)
+      
         app.post("/events", async (req, res) => {
             const eventdata = req.body;
             const result = await eventCollection.insertOne(eventdata);
             res.send(result);
         })
 
-        // 7. Get All Events
+        
         app.get("/events", async (req, res) => {
             const { type, search } = req.query;
             let query = {};
@@ -126,22 +122,22 @@ async function run() {
             res.send(result);
         });
 
-        // 8. Get Single Event
+        
         app.get("/events/:id", async (req, res) => {
             const id = req.params.id;
             const result = await eventCollection.findOne({ _id: new ObjectId(id) });
             res.send(result);
         })
 
-        // 9. My Events (Public)
+      
         app.get("/my-events/:email", async (req, res) => {
             const email = req.params.email;
-            // সিকিউরিটি চেক বাদ দিয়েছি
+            
             const result = await eventCollection.find({ email: email }).toArray();
             res.send(result);
         })
 
-        // 10. Delete Event (Public)
+       
         app.delete("/events/:id", async (req, res) => {
             try {
                 const id = req.params.id;
@@ -153,7 +149,7 @@ async function run() {
             }
         })
 
-        // 11. Update Event (Public)
+        
         app.put("/events/:id", async (req, res) => {
             try {
                 const id = req.params.id;
@@ -169,9 +165,7 @@ async function run() {
         });
 
 
-        // --- Joined Events API ---
-
-        // 12. Join Event (Public)
+      
         app.post("/joined-events", async (req, res) => {
             const joinedData = req.body;
 
@@ -187,15 +181,15 @@ async function run() {
             res.send(result);
         })
 
-        // 13. Get Joined Events (Public)
+       
         app.get("/joined-events/:email", async (req, res) => {
             const email = req.params.email;
-            // সিকিউরিটি চেক বাদ দিয়েছি
+           
             const result = await joinedEventsCollection.find({ userEmail: email }).toArray();
             res.send(result);
         })
 
-        // 14. Cancel/Delete Joined Event (Public)
+        
         app.delete("/joined-events/:id", async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
